@@ -3,21 +3,22 @@ name: Portfolio Deployment
 on:
   push:
     branches:
-    - main
+      - main
+  workflow_dispatch: # Yahan se aap GitHub dashboard se manual bhi run kar sakenge
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v1
+      - name: Checkout Code
+        uses: actions/checkout@v4  # v1 purana ho chuka hai, v4 latest aur fast hai
 
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4  # v1 se aage chal kar errors aayenge, v4 use karein
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
 
-    - name: Deploy static site to S3 bucket
-      run: aws s3 sync . s3://demo-one-two --delete
+      - name: Deploy static site to S3 bucket
+        run: aws s3 sync . s3://demo-one-two --delete --exclude ".git/*" --exclude ".github/*"
